@@ -1,9 +1,14 @@
 export interface User {
-  id?: number;
+  id?: number;          
+  username: string;    
+  password?: string;  
+}
+
+export interface LoginRequest {
   username: string;
-  password?: string; 
+  password?: string;
 }
 
 export interface AuthResponse {
-  token: string;
+  token: string;       
 }
