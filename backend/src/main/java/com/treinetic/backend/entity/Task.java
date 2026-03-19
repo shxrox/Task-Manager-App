@@ -1,4 +1,4 @@
-package com.treinetic.taskmanager.entity;
+package com.treinetic.backend.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
