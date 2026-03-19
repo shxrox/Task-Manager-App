@@ -1,0 +1,23 @@
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+mat-table {
+  width: 100%;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border: 1px dashed #ccc;
+  margin-top: 10px;
+}
+
+.mat-column-actions {
+  display: flex;
+  justify-content: flex-end;
+}
