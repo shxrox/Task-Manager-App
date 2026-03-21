@@ -1,5 +1,6 @@
 package com.treinetic.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,11 +17,10 @@ public class Task {
     private Long id;
 
     @NotBlank(message = "Title is required")
-    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
+    @Size(min = 3, max = 100)
     @Column(nullable = false)
     private String title;
 
-    @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
     @NotBlank(message = "Status is required")
@@ -30,4 +30,9 @@ public class Task {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 }

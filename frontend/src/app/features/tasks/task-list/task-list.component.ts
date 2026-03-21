@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // Added for ngModel
+import { FormsModule } from '@angular/forms'; 
 import { TaskService } from '../../../core/services/task.service';
 import { Task } from '../../../shared/models/task.model';
 
@@ -33,7 +33,7 @@ export class TaskListComponent implements OnInit {
   allTasks: Task[] = [];
   filteredTasks: Task[] = [];
   selectedStatus: string = 'ALL';
-  displayedColumns: string[] = ['title', 'description', 'status', 'actions'];
+  displayedColumns: string[] = ['title', 'description', 'status', 'createdAt', 'actions'];
 
   constructor(private taskService: TaskService) {}
 
