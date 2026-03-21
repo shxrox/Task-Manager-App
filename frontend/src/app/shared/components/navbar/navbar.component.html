@@ -1,22 +1,32 @@
 <mat-toolbar color="primary" class="navbar">
-  <span class="logo" routerLink="/">TaskMaster Pro</span>
+  <span class="logo" routerLink="/" style="cursor: pointer;">
+    <mat-icon style="vertical-align: middle; margin-right: 8px;">task_alt</mat-icon>
+    TaskMaster Pro
+  </span>
   
   <span class="spacer"></span>
 
-  <ng-container *ngIf="authService.isLoggedIn()">
-    <button mat-button routerLink="/tasks">
-      <mat-icon>assignment</mat-icon>
-      My Tasks
-    </button>
-    
-    <button mat-button (click)="onLogout()">
-      <mat-icon>logout</mat-icon>
-      Logout
-    </button>
-  </ng-container>
-
-  <ng-container *ngIf="!authService.isLoggedIn()">
-    <button mat-button routerLink="/login">Login</button>
-    <button mat-button routerLink="/register">Register</button>
-  </ng-container>
+  <div class="nav-links">
+    @if (isLoggedIn$ | async) {
+      <button mat-button routerLink="/tasks">
+        <mat-icon>assignment</mat-icon>
+        My Tasks
+      </button>
+      
+      <button mat-button (click)="onLogout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    } 
+    @else {
+      <button mat-button routerLink="/login">
+        <mat-icon>login</mat-icon>
+        Login
+      </button>
+      
+      <button mat-raised-button color="accent" routerLink="/register">
+        Register
+      </button>
+    }
+  </div>
 </mat-toolbar>
