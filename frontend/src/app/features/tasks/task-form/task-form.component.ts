@@ -14,13 +14,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   selector: 'app-task-form',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    ReactiveFormsModule,
     RouterModule,
-    MatCardModule, 
-    MatInputModule, 
-    MatButtonModule, 
-    MatSelectModule, 
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
     MatFormFieldModule
   ],
   templateUrl: './task-form.component.html',
@@ -37,11 +37,11 @@ export class TaskFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.taskForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required]],
-      status: ['TO_DO', [Validators.required]]
-    });
+   this.taskForm = this.fb.group({
+    title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    description: ['', [Validators.required, Validators.maxLength(500)]],
+    status: ['TO_DO', [Validators.required]]
+  });
   }
 
   ngOnInit(): void {
@@ -62,7 +62,7 @@ export class TaskFormComponent implements OnInit {
   onSubmit(): void {
     if (this.taskForm.valid) {
       const taskData = this.taskForm.value;
-      
+
       if (this.isEditMode && this.taskId) {
         this.taskService.updateTask(this.taskId, taskData).subscribe(() => {
           this.router.navigate(['/tasks']);
@@ -74,4 +74,5 @@ export class TaskFormComponent implements OnInit {
       }
     }
   }
+
 }

@@ -1,12 +1,24 @@
 <div class="header-actions">
   <h1>My Tasks</h1>
-  <button mat-raised-button color="primary" routerLink="/tasks/new">
-    <mat-icon>add</mat-icon> New Task
-  </button>
+  
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Filter by Status</mat-label>
+      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilter()">
+        <mat-option value="ALL">All Tasks</mat-option>
+        <mat-option value="TO_DO">To Do</mat-option>
+        <mat-option value="IN_PROGRESS">In Progress</mat-option>
+        <mat-option value="DONE">Done</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" routerLink="/tasks/new">
+      <mat-icon>add</mat-icon> New Task
+    </button>
+  </div>
 </div>
 
-<mat-table [dataSource]="tasks" class="mat-elevation-z8">
-
+<mat-table [dataSource]="filteredTasks" class="mat-elevation-z8">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef> Title </mat-header-cell>
     <mat-cell *matCellDef="let task"> {{task.title}} </mat-cell>
@@ -43,7 +55,3 @@
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>
-
-<div *ngIf="tasks.length === 0" class="no-data">
-  <p>No tasks found. Click "New Task" to get started!</p>
-</div>
