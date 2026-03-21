@@ -1,53 +1,51 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { User, LoginRequest, AuthResponse } from '../../shared/models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
-
-  // 1. Initialize BehaviorSubject based on current token status
+  private apiUrl = 'http://localhost:8080/api/auth';
   private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  // Helper to check localStorage
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  // 2. Expose as an Observable so components can subscribe to changes
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isAuthenticated(): boolean {
+    return this.hasToken();
+  }
+
   get isLoggedIn$(): Observable<boolean> {
     return this.loggedIn.asObservable();
   }
 
-  login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => {
+  register(user: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, user);
+  }
+
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+      tap((response: any) => {
         if (response.token) {
-          localStorage.setItem('token', response.token); 
-          // 3. Notify all subscribers that we are now logged in
+          localStorage.setItem('token', response.token);
           this.loggedIn.next(true);
         }
       })
     );
   }
 
-  register(user: User): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/register`, user);
-  }
-
   logout(): void {
     localStorage.removeItem('token');
-    // 4. Notify all subscribers that we are now logged out
     this.loggedIn.next(false);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
+    this.router.navigate(['/login']);
   }
 }
