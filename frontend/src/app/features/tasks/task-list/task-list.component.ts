@@ -22,7 +22,7 @@ import { MatCardModule } from '@angular/material/card';
     CommonModule, 
     RouterModule, 
     FormsModule, 
-    TaskItemComponent,
+    // TaskItemComponent,
     MatTableModule, 
     MatButtonModule, 
     MatIconModule, 
