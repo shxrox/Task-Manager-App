@@ -1,5 +1,6 @@
 package com.treinetic.backend.controller;
 
+import com.treinetic.backend.dto.TaskDTO;
 import com.treinetic.backend.entity.Task;
 import com.treinetic.backend.entity.User;
 import com.treinetic.backend.repository.UserRepository;
@@ -25,42 +26,54 @@ public class TaskController {
         this.userRepository = userRepository;
     }
 
-    // Helper method to get the logged-in user
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    // Helper to convert Entity to DTO
+    private TaskDTO convertToDTO(Task task) {
+        return new TaskDTO(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getCreatedAt()
+        );
+    }
+
     @GetMapping
-    public List<Task> getAllTasks() {
-        // Filter by the current user's ID
-        return taskService.getTasksByUserId(getCurrentUser().getId());
+    public List<TaskDTO> getAllTasks() {
+        return taskService.getTasksByUserId(getCurrentUser().getId())
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
         User currentUser = getCurrentUser();
         return taskService.getTaskById(id)
-                .filter(task -> task.getUser().getId().equals(currentUser.getId())) // Security Check
+                .filter(task -> task.getUser().getId().equals(currentUser.getId()))
+                .map(this::convertToDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        // Link the task to the current user before saving
+    public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) {
         task.setUser(getCurrentUser());
-        return taskService.createTask(task);
+        Task savedTask = taskService.createTask(task);
+        return ResponseEntity.ok(convertToDTO(savedTask));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
         User currentUser = getCurrentUser();
         try {
-            // Your Service should ideally verify that the task belongs to this user
             Task updatedTask = taskService.updateTask(id, taskDetails, currentUser.getId());
-            return ResponseEntity.ok(updatedTask);
+            return ResponseEntity.ok(convertToDTO(updatedTask));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -68,9 +81,12 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        User currentUser = getCurrentUser();
-        // Pass userId to service to ensure they can't delete someone else's task
-        taskService.deleteTask(id, currentUser.getId());
-        return ResponseEntity.noContent().build();
+        try {
+            User currentUser = getCurrentUser();
+            taskService.deleteTask(id, currentUser.getId());
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
