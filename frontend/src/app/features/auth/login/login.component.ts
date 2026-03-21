@@ -13,12 +13,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    ReactiveFormsModule,
     RouterModule,
-    MatCardModule, 
-    MatInputModule, 
-    MatButtonModule, 
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
     MatFormFieldModule
   ],
   templateUrl: './login.component.html',
@@ -34,8 +34,11 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(4)]]
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [
+        Validators.required,
+        Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)
+      ]]
     });
   }
 
